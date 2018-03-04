@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.*;
  * @author zakyalvan
  * @see ParkingSpace
  */
-public class ParkingSpaceTests {
+public class ParkingSpaceTest {
     @Test
     public void givenEmptySpace_whenOneOccupantEnter_thenNearestSlotMustBeOccupied() {
         Space space = Space.parkingWithCapacity(10);

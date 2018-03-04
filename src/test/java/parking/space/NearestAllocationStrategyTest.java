@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author zakyalvan
  * @see NearestAllocationStrategy
  */
-public class NearestAllocationStrategyTests {
+public class NearestAllocationStrategyTest {
     @Test
     public void givenAvailableSlots_whenAllocateForOneSlot_thenOneAvailableSlotOccupied() {
         Consumer<SpaceInitializer> customizer = initializer -> initializer
