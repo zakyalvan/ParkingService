@@ -75,7 +75,7 @@ public class ParkingSpaceTest {
         space.exitGate().leave(5);
     }
 
-    @Test(expectedExceptions = SlotIndexException.class)
+    @Test(expectedExceptions = InvalidIndexException.class)
     public void givenOccupiedSlots_whenLeaveNotExistsSlot_thenThrownSlotIndexException() {
         Consumer<SpaceInitializer> customizer = initializer -> initializer
                 .reserveSlot(1, Occupant.carInfo("1234-234", PaintColor.WHITE))

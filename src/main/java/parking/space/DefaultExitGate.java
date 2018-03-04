@@ -43,7 +43,7 @@ public class DefaultExitGate implements ExitGate, GateOperations {
     @Override
     public Slot leave(Integer slotIndex) {
         if(slotIndex == null || (slotIndex < 1 || slotIndex > fromSpace.slotRegistry().capacity())) {
-            throw new SlotIndexException(fromSpace.slotRegistry().capacity(), slotIndex);
+            throw new InvalidIndexException(fromSpace.slotRegistry().capacity(), slotIndex);
         }
 
         if(isClosed()) {

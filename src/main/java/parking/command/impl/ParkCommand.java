@@ -30,13 +30,13 @@ public class ParkCommand implements Command {
         }
     }
 
-    public static class InputTranslator implements SmartCommandTranslator {
+    public static class Translator implements SmartCommandTranslator {
         private static final String DEFAULT_COMMAND_IDENTIFIER = "park ";
 
         private final Space parkingSpace;
         private final String commandIdentifier;
 
-        public InputTranslator(Space parkingSpace) {
+        public Translator(Space parkingSpace) {
             this.parkingSpace = parkingSpace;
             this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
         }

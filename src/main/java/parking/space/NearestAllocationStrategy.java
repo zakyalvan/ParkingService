@@ -73,7 +73,7 @@ public class NearestAllocationStrategy implements AllocationStrategy {
     @Override
     public Slot releaseSlot(Integer slotIndex) {
         if (slotIndex > slotRegistry.capacity()) {
-            throw new SlotIndexException(slotRegistry.capacity(), slotIndex);
+            throw new InvalidIndexException(slotRegistry.capacity(), slotIndex);
         }
 
         if(slotRegistry.occupied().isEmpty()) {

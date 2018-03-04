@@ -25,7 +25,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.InputTranslator(space));
+                translators.add(new ParkCommand.Translator(space));
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -45,7 +45,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.InputTranslator(space));
+                translators.add(new ParkCommand.Translator(space));
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -65,7 +65,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.InputTranslator(space));
+                translators.add(new ParkCommand.Translator(space));
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -85,7 +85,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.InputTranslator(space));
+                translators.add(new ParkCommand.Translator(space));
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -105,7 +105,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.InputTranslator(space));
+                translators.add(new ParkCommand.Translator(space));
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
