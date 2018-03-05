@@ -10,13 +10,19 @@ Please note, thread synchronization in parking space management (especially in s
 
 == Running
 
-Before running, this project, make sure JDK 8 installed on target machine.
+Before running, this project, make sure JDK 8 installed on target machine, otherwise the code wont compiled.
 
 There are two required mechanism to run this project (as stated in test rule), i.e. run in interactive mode and not.
 
 === Interactive Mode
 
+To run in interactive mode, execute ./parking_lot from project base directory. In background, it will check whether jar already built, if not built first (using ./mvnw clean install command) then execute normal 'java -jar ParkingService.jar' command.
+
+In interactive mode, to close the running program, type in EXIT (case ignored) instead of brute force 'Ctrl+C' ;)
+
 === Non Interactive Mode
+
+To run in non interactive mode, execute './parking_lot file_inputs.txt' from project base directory. In background, it will check whether jar already built, if not built first (using ./mvnw clean install command) then execute normal 'java -jar ParkingService.jar file_inputs.txt' command.
 
 == Improvement
 
