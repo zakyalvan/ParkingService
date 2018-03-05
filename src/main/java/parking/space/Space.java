@@ -45,6 +45,8 @@ public interface Space {
             initCustomizer.accept(spaceInitializer);
         }
         AllocationStrategy allocationStrategy = AllocationStrategy.lowerIndexNearer(slotRegistry);
-        return new ParkingSpace(slotRegistry, allocationStrategy);
+        ParkingSpace createdSpace = new ParkingSpace(slotRegistry, allocationStrategy);
+        CurrentSpaceHolder.instance().set(createdSpace);
+        return createdSpace;
     }
 }

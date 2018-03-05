@@ -1,43 +1,44 @@
 package parking.command.impl;
 
-import parking.command.core.Command;
-import parking.command.core.Result;
-import parking.command.core.SmartCommandTranslator;
-import parking.space.*;
+import parking.command.core.*;
+import parking.space.CurrentSpaceHolder;
+import parking.space.Slot;
+import parking.space.Space;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author zakyalvan
  */
-public class LeaveCommand implements Command {
+public class StatusInquiryCommand implements Command {
     private final Space targetSpace;
-    private final Integer slotIndex;
 
-    LeaveCommand(Space targetSpace, Integer slotIndex) {
+    StatusInquiryCommand(Space targetSpace) {
+        if(targetSpace == null) {
+            throw new IllegalArgumentException("Target space for status inquiry command must be provided");
+        }
         this.targetSpace = targetSpace;
-        this.slotIndex = slotIndex;
     }
 
     public Space targetSpace() {
         return targetSpace;
     }
 
-    public Integer slotNumber() {
-        return this.slotIndex;
-    }
-
     @Override
     public Result execute() {
         try {
-            Slot leavedSlot = targetSpace.exitGate().leave(slotIndex);
-            return new LeaveResult(this, leavedSlot);
+            Collection<Slot> occupiedSlots = targetSpace.slotRegistry().occupied();
+            return new StatusInquiryResult(this, occupiedSlots);
         }
         catch (Exception e) {
-            return new LeaveResult(this, e);
+            return new StatusInquiryResult(this, e);
         }
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "leave ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "status";
 
         private final String commandIdentifier;
 
@@ -55,24 +56,12 @@ public class LeaveCommand implements Command {
             String[] inputParameters = input.trim().toUpperCase().replaceFirst(commandIdentifier.toUpperCase(), "")
                     .trim().split("\\s{1,}");
 
-            if(inputParameters.length != 1) {
-                throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 1, inputParameters);
-            }
-
-            Integer slotIndex = null;
-            try {
-                slotIndex = Integer.parseInt(inputParameters[0]);
-            }
-            catch (NumberFormatException e) {
-                throw new InvalidArgumentTypeException(commandIdentifier, inputParameters[1], Integer.class);
-            }
-
             CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
             if(!spaceHolder.exists()) {
                 throw new TargetSpaceNotFoundException(commandIdentifier.trim());
             }
 
-            LeaveCommand command = new LeaveCommand(spaceHolder.get(), slotIndex);
+            StatusInquiryCommand command = new StatusInquiryCommand(spaceHolder.get());
             return command;
         }
     }

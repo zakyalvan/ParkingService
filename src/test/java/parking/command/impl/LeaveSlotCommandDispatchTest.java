@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author zakyalvan
  */
-public class LeaveCommandDispatchTest {
+public class LeaveSlotCommandDispatchTest {
     @Test
     public void givenEmptyParkingSpace_whenDispatchWithParkCommandInput_thenAllocateOneSlot() {
         Consumer<SpaceInitializer> initCustomizer = initializer -> initializer
@@ -29,7 +29,7 @@ public class LeaveCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new LeaveCommand.Translator(space));
+                translators.add(new LeaveCommand.Translator());
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new LeaveResult.Formatter());
 

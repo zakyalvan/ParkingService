@@ -33,11 +33,9 @@ public class ParkCommand implements Command {
     public static class Translator implements SmartCommandTranslator {
         private static final String DEFAULT_COMMAND_IDENTIFIER = "park ";
 
-        private final Space parkingSpace;
         private final String commandIdentifier;
 
-        public Translator(Space parkingSpace) {
-            this.parkingSpace = parkingSpace;
+        public Translator() {
             this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
         }
 
@@ -66,7 +64,12 @@ public class ParkCommand implements Command {
 
             Occupant occupant = CarInfo.withDetails(registrationNumber, paintColor);
 
-            ParkCommand command = new ParkCommand(parkingSpace, occupant);
+            CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
+            if(!spaceHolder.exists()) {
+                throw new TargetSpaceNotFoundException(commandIdentifier.trim());
+            }
+
+            ParkCommand command = new ParkCommand(spaceHolder.get(), occupant);
             return command;
         }
     }

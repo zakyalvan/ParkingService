@@ -1,6 +1,9 @@
 package parking.command.core;
 
-public class AbstractResult implements Result {
+/**
+ * @author zakyalvan
+ */
+public abstract class AbstractResult implements Result {
     private final Command command;
     private final Throwable throwable;
 

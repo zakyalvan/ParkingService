@@ -3,41 +3,36 @@ package parking.command.impl;
 import parking.command.core.Command;
 import parking.command.core.Result;
 import parking.command.core.SmartCommandTranslator;
-import parking.space.*;
+import parking.space.Space;
 
 /**
  * @author zakyalvan
  */
-public class LeaveCommand implements Command {
-    private final Space targetSpace;
-    private final Integer slotIndex;
+public class CreateSpaceCommand implements Command {
+    private final Integer spaceCapacity;
 
-    LeaveCommand(Space targetSpace, Integer slotIndex) {
-        this.targetSpace = targetSpace;
-        this.slotIndex = slotIndex;
+    CreateSpaceCommand(Integer spaceCapacity) {
+        this.spaceCapacity = spaceCapacity;
     }
 
-    public Space targetSpace() {
-        return targetSpace;
-    }
-
-    public Integer slotNumber() {
-        return this.slotIndex;
+    public Integer spaceCapacity() {
+        return spaceCapacity;
     }
 
     @Override
     public Result execute() {
         try {
-            Slot leavedSlot = targetSpace.exitGate().leave(slotIndex);
-            return new LeaveResult(this, leavedSlot);
+            Space createdSpace = Space.parkingWithCapacity(spaceCapacity);
+            createdSpace.openSpace();
+            return new CreateSpaceResult(this, createdSpace);
         }
         catch (Exception e) {
-            return new LeaveResult(this, e);
+            return new CreateSpaceResult(this, e);
         }
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "leave ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "create_parking_lot ";
 
         private final String commandIdentifier;
 
@@ -59,20 +54,15 @@ public class LeaveCommand implements Command {
                 throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 1, inputParameters);
             }
 
-            Integer slotIndex = null;
+            Integer spaceCapacity = null;
             try {
-                slotIndex = Integer.parseInt(inputParameters[0]);
+                spaceCapacity = Integer.parseInt(inputParameters[0]);
             }
             catch (NumberFormatException e) {
-                throw new InvalidArgumentTypeException(commandIdentifier, inputParameters[1], Integer.class);
+                throw new InvalidArgumentTypeException(commandIdentifier, inputParameters[0], Integer.class);
             }
 
-            CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
-            if(!spaceHolder.exists()) {
-                throw new TargetSpaceNotFoundException(commandIdentifier.trim());
-            }
-
-            LeaveCommand command = new LeaveCommand(spaceHolder.get(), slotIndex);
+            CreateSpaceCommand command = new CreateSpaceCommand(spaceCapacity);
             return command;
         }
     }

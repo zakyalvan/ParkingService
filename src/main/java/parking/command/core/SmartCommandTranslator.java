@@ -1,5 +1,7 @@
 package parking.command.core;
 
+import parking.space.Space;
+
 /**
  * @author zakyalvan
  */

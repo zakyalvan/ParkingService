@@ -3,41 +3,53 @@ package parking.command.impl;
 import parking.command.core.Command;
 import parking.command.core.Result;
 import parking.command.core.SmartCommandTranslator;
-import parking.space.*;
+import parking.space.CurrentSpaceHolder;
+import parking.space.PaintColor;
+import parking.space.Slot;
+import parking.space.Space;
+
+import java.util.Optional;
 
 /**
  * @author zakyalvan
  */
-public class LeaveCommand implements Command {
+public class SlotIndexByRegistrationInquiryCommand implements Command {
     private final Space targetSpace;
-    private final Integer slotIndex;
+    private final String registerNumber;
 
-    LeaveCommand(Space targetSpace, Integer slotIndex) {
+    SlotIndexByRegistrationInquiryCommand(Space targetSpace, String registerNumber) {
+        if(targetSpace == null) {
+            throw new IllegalArgumentException("Target space for slot index by registration number inquiry command must be provided");
+        }
+
         this.targetSpace = targetSpace;
-        this.slotIndex = slotIndex;
+        this.registerNumber = registerNumber;
     }
 
     public Space targetSpace() {
         return targetSpace;
     }
 
-    public Integer slotNumber() {
-        return this.slotIndex;
+    public String registerNumber() {
+        return registerNumber;
     }
 
     @Override
     public Result execute() {
         try {
-            Slot leavedSlot = targetSpace.exitGate().leave(slotIndex);
-            return new LeaveResult(this, leavedSlot);
+            Optional<Slot> occupiedSlot = targetSpace.slotRegistry().occupied()
+                    .stream().filter(slot -> slot.occupant().registerNumber().equalsIgnoreCase(registerNumber()))
+                    .findFirst();
+
+            return new SlotIndexByRegistrationInquiryResult(this, occupiedSlot);
         }
         catch (Exception e) {
-            return new LeaveResult(this, e);
+            return new SlotIndexByRegistrationInquiryResult(this, e);
         }
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "leave ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "slot_number_for_registration_number ";
 
         private final String commandIdentifier;
 
@@ -59,20 +71,14 @@ public class LeaveCommand implements Command {
                 throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 1, inputParameters);
             }
 
-            Integer slotIndex = null;
-            try {
-                slotIndex = Integer.parseInt(inputParameters[0]);
-            }
-            catch (NumberFormatException e) {
-                throw new InvalidArgumentTypeException(commandIdentifier, inputParameters[1], Integer.class);
-            }
+            String registerNumber = inputParameters[0].trim();
 
             CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
             if(!spaceHolder.exists()) {
                 throw new TargetSpaceNotFoundException(commandIdentifier.trim());
             }
 
-            LeaveCommand command = new LeaveCommand(spaceHolder.get(), slotIndex);
+            SlotIndexByRegistrationInquiryCommand command = new SlotIndexByRegistrationInquiryCommand(spaceHolder.get(), registerNumber);
             return command;
         }
     }

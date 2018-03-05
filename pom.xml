@@ -11,6 +11,8 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
     </properties>
 
     <dependencies>
@@ -33,4 +35,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>ParkingService</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>parking.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

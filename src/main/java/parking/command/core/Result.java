@@ -1,7 +1,7 @@
 package parking.command.core;
 
 /**
- * Contract for output of {@link Command} execution.
+ * Contract for output of a {@link Command} execution.
  *
  * @author zakyalvan
  */

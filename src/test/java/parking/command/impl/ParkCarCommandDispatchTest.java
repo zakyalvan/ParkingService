@@ -18,14 +18,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author zakyalvan
  */
-public class ParkCommandDispatchTest {
+public class ParkCarCommandDispatchTest {
     @Test
     public void givenEmptyParkingSpace_whenDispatchWithParkCommandInput_thenAllocateOneSlot() {
         Space space = Space.parkingWithCapacity(10);
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.Translator(space));
+                translators.add(new ParkCommand.Translator());
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -45,7 +45,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.Translator(space));
+                translators.add(new ParkCommand.Translator());
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -65,7 +65,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.Translator(space));
+                translators.add(new ParkCommand.Translator());
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -85,7 +85,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.Translator(space));
+                translators.add(new ParkCommand.Translator());
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
@@ -105,7 +105,7 @@ public class ParkCommandDispatchTest {
         space.openSpace();
 
         Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
-                translators.add(new ParkCommand.Translator(space));
+                translators.add(new ParkCommand.Translator());
         Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
                 formats.add(new ParkResult.Formatter());
 
