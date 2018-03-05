@@ -40,6 +40,10 @@ public class SlotIndexByColorInquiryResult extends AbstractResult {
             if(result.success()) {
                 SlotIndexByColorInquiryResult inquiryResult = (SlotIndexByColorInquiryResult) result;
 
+                if(inquiryResult.colorSlots().isEmpty()) {
+                    return "None";
+                }
+
                 StringBuilder outputBuilder = new StringBuilder();
                 int loopIndex = 1;
                 for (Slot colorSlot : inquiryResult.colorSlots()) {

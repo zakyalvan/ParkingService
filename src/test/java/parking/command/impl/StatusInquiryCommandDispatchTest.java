@@ -46,10 +46,10 @@ public class StatusInquiryCommandDispatchTest {
 
             StringBuilder builder = new StringBuilder();
 
-            builder.append("Slot No").append("\t").append("Registration No.").append("\t\t").append("Colour").append("\n\r");
+            builder.append("Slot No").append("\t").append("Registration No.").append("\t").append("Colour").append("\n\r");
             int loopIndex = 1;
             for(Slot occupiedSlot : space.slotRegistry().occupied()) {
-                builder.append(occupiedSlot.index()).append("\t\t\t").append(occupiedSlot.occupant().registerNumber()).append("\t\t\t\t").append(((CarInfo)occupiedSlot.occupant()).paintColor());
+                builder.append(occupiedSlot.index()).append("\t").append(occupiedSlot.occupant().registerNumber()).append("\t").append(((CarInfo)occupiedSlot.occupant()).paintColor());
                 if(loopIndex != space.slotRegistry().occupied().size()) {
                     builder.append("\n\r");
                 }

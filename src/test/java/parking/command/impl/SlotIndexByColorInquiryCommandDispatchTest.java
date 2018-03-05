@@ -43,6 +43,6 @@ public class SlotIndexByColorInquiryCommandDispatchTest {
         assertThat(secondOutput, is("2"));
 
         String thirdOutput = dispatcher.dispatch("slot_numbers_for_cars_with_colour Blue");
-        assertThat(thirdOutput, is(""));
+        assertThat(thirdOutput, is("None"));
     }
 }
