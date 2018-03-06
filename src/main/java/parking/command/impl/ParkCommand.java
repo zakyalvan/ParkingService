@@ -31,42 +31,39 @@ public class ParkCommand implements Command {
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "park ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "park";
 
-        private final String commandIdentifier;
+        private final CommandIdentifier identifier;
 
         public Translator() {
-            this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
+            this.identifier = CommandIdentifier.by(DEFAULT_COMMAND_IDENTIFIER);
         }
 
         @Override
-        public boolean supports(String input) {
-            return input.trim().toUpperCase().startsWith(commandIdentifier.toUpperCase());
+        public boolean supports(Input input) {
+            return identifier.equals(input.identifier());
         }
 
         @Override
-        public Command translate(String input) {
-            String[] inputParameters = input.trim().toUpperCase().replaceFirst(commandIdentifier.toUpperCase(), "")
-                    .trim().split("\\s{1,}");
-
-            if(inputParameters.length != 2) {
-                throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 2, inputParameters);
+        public Command translate(Input input) {
+            if(input.arguments().size() != 2) {
+                throw new InvalidArgumentSizeException(identifier, input.arguments().size(), 2, input.arguments());
             }
 
-            String registrationNumber = inputParameters[0];
+            String registrationNumber = input.argument(0);
             PaintColor paintColor = null;
             try {
-                paintColor = PaintColor.valueOf(inputParameters[1]);
+                paintColor = PaintColor.valueOf(input.argument(1).toUpperCase());
             }
             catch (IllegalArgumentException e) {
-                throw new InvalidColorArgumentException(inputParameters[1]);
+                throw new InvalidColorArgumentException(input.argument(1));
             }
 
             Occupant occupant = CarInfo.withDetails(registrationNumber, paintColor);
 
             CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
             if(!spaceHolder.exists()) {
-                throw new TargetSpaceNotFoundException(commandIdentifier.trim());
+                throw new TargetSpaceNotFoundException(identifier);
             }
 
             ParkCommand command = new ParkCommand(spaceHolder.get(), occupant);

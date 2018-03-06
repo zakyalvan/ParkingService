@@ -1,19 +1,20 @@
 package parking.command.impl;
 
+import parking.command.core.CommandIdentifier;
 import parking.command.core.CommandTranslationException;
 
 /**
  * @author zakyalvan
  */
 public class TargetSpaceNotFoundException extends CommandTranslationException {
-    private final String commandIdentifier;
+    private final CommandIdentifier commandIdentifier;
 
-    public TargetSpaceNotFoundException(String commandIdentifier) {
+    public TargetSpaceNotFoundException(CommandIdentifier commandIdentifier) {
         super(String.format("Execution of command '%s' requiring a space to be created first", commandIdentifier));
         this.commandIdentifier = commandIdentifier;
     }
 
-    public String commandIdentifier() {
+    public CommandIdentifier commandIdentifier() {
         return commandIdentifier;
     }
 }

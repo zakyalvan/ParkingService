@@ -1,8 +1,6 @@
 package parking.command.impl;
 
-import parking.command.core.Command;
-import parking.command.core.Result;
-import parking.command.core.SmartCommandTranslator;
+import parking.command.core.*;
 import parking.space.*;
 
 /**
@@ -37,39 +35,36 @@ public class LeaveCommand implements Command {
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "leave ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "leave";
 
-        private final String commandIdentifier;
+        private final CommandIdentifier identifier;
 
         public Translator() {
-            this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
+            this.identifier = CommandIdentifier.by(DEFAULT_COMMAND_IDENTIFIER);
         }
 
         @Override
-        public boolean supports(String input) {
-            return input.trim().toUpperCase().startsWith(commandIdentifier.toUpperCase());
+        public boolean supports(Input input) {
+            return identifier.equals(input.identifier());
         }
 
         @Override
-        public Command translate(String input) {
-            String[] inputParameters = input.trim().toUpperCase().replaceFirst(commandIdentifier.toUpperCase(), "")
-                    .trim().split("\\s{1,}");
-
-            if(inputParameters.length != 1) {
-                throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 1, inputParameters);
+        public Command translate(Input input) {
+            if(input.arguments().size() != 1) {
+                throw new InvalidArgumentSizeException(identifier, input.arguments().size(), 1, input.arguments());
             }
 
             Integer slotIndex = null;
             try {
-                slotIndex = Integer.parseInt(inputParameters[0]);
+                slotIndex = Integer.parseInt(input.argument(0));
             }
             catch (NumberFormatException e) {
-                throw new InvalidArgumentTypeException(commandIdentifier, inputParameters[1], Integer.class);
+                throw new InvalidArgumentTypeException(identifier, input.argument(0), Integer.class);
             }
 
             CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
             if(!spaceHolder.exists()) {
-                throw new TargetSpaceNotFoundException(commandIdentifier.trim());
+                throw new TargetSpaceNotFoundException(identifier);
             }
 
             LeaveCommand command = new LeaveCommand(spaceHolder.get(), slotIndex);

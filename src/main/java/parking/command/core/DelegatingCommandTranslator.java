@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A {@link CommandTranslator} which deletegate to other {@link CommandTranslator}
+ * A {@link CommandTranslator} which delegate to other {@link CommandTranslator}.
  *
  * @author zakyalvan
  */
@@ -19,8 +19,8 @@ public class DelegatingCommandTranslator implements CommandTranslator {
     }
 
     @Override
-    public Command translate(String input) {
-        if(input == null || input.trim().isEmpty()) {
+    public Command translate(Input input) {
+        if(input == null) {
             throw new BlankInputException();
         }
 
@@ -33,7 +33,7 @@ public class DelegatingCommandTranslator implements CommandTranslator {
         }
 
         if(applicableTranslator == null) {
-            throw new TranslatorUnavailableException(input);
+            throw new TranslatorNotFoundException(input);
         }
 
         return applicableTranslator.translate(input);

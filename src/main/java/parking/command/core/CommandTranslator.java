@@ -12,5 +12,5 @@ public interface CommandTranslator {
      * @return
      * @throws CommandTranslationException
      */
-    Command translate(String input) throws CommandTranslationException;
+    Command translate(Input input) throws CommandTranslationException;
 }

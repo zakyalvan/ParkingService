@@ -1,8 +1,6 @@
 package parking.command.impl;
 
-import parking.command.core.Command;
-import parking.command.core.Result;
-import parking.command.core.SmartCommandTranslator;
+import parking.command.core.*;
 import parking.space.*;
 
 import java.util.List;
@@ -48,39 +46,36 @@ public class RegistrationByColorInquiryCommand implements Command {
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "registration_numbers_for_cars_with_colour ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "registration_numbers_for_cars_with_colour";
 
-        private final String commandIdentifier;
+        private final CommandIdentifier identifier;
 
         public Translator() {
-            this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
+            identifier = CommandIdentifier.by(DEFAULT_COMMAND_IDENTIFIER);
         }
 
         @Override
-        public boolean supports(String input) {
-            return input.trim().toUpperCase().startsWith(commandIdentifier.toUpperCase());
+        public boolean supports(Input input) {
+            return identifier.equals(input.identifier());
         }
 
         @Override
-        public Command translate(String input) {
-            String[] inputParameters = input.trim().toUpperCase().replaceFirst(commandIdentifier.toUpperCase(), "")
-                    .trim().split("\\s{1,}");
-
-            if(inputParameters.length != 1) {
-                throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 1, inputParameters);
+        public Command translate(Input input) {
+            if(input.arguments().size() != 1) {
+                throw new InvalidArgumentSizeException(identifier, input.arguments().size(), 1, input.arguments());
             }
 
             PaintColor paintColor = null;
             try {
-                paintColor = PaintColor.valueOf(inputParameters[0]);
+                paintColor = PaintColor.valueOf(input.argument(0).toUpperCase());
             }
             catch (IllegalArgumentException e) {
-                throw new InvalidColorArgumentException(inputParameters[0]);
+                throw new InvalidColorArgumentException(input.argument(0));
             }
 
             CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
             if(!spaceHolder.exists()) {
-                throw new TargetSpaceNotFoundException(commandIdentifier.trim());
+                throw new TargetSpaceNotFoundException(identifier);
             }
 
             RegistrationByColorInquiryCommand command = new RegistrationByColorInquiryCommand(spaceHolder.get(), paintColor);

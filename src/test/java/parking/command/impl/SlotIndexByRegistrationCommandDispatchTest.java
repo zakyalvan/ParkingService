@@ -20,11 +20,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class SlotIndexByRegistrationCommandDispatchTest {
     @Test
-    public void givenInitializerParkingSpace_whenDispatchWithSlotIndexByColorInquiryCommandInput_thenReturnAllSlotNumberOccupied() {
+    public void givenInitializerParkingSpace_whenDispatchWithSlotIndexByRegisterNumberInquiryCommandInput_thenReturnSlotNumberOccupied() {
         Consumer<SpaceInitializer> initCustomizer = initializer -> initializer
                 .reserveSlot(1, Occupant.carInfo("ASD-123-234-QWE", PaintColor.WHITE))
                 .reserveSlot(2, Occupant.carInfo("ACD-123-235-WWE", PaintColor.RED))
-                .reserveSlot(4, Occupant.carInfo("ADD-123-237-CDE", PaintColor.WHITE));
+                .reserveSlot(4, Occupant.carInfo("ADD-123-237-CDE", PaintColor.WHITE))
+                .reserveSlot(5, Occupant.carInfo("B 4030 BCM", PaintColor.RED));
 
         Space space = Space.parkingWithCapacity(10, initCustomizer);
         space.openSpace();
@@ -41,6 +42,28 @@ public class SlotIndexByRegistrationCommandDispatchTest {
 
         String secondOutput = dispatcher.dispatch("slot_number_for_registration_number ACD-123-235-WWE");
         assertThat(secondOutput, is("2"));
+
+        String thirdOutput = dispatcher.dispatch("slot_number_for_registration_number 'b 4030 Bcm'");
+        assertThat(thirdOutput, is("5"));
+    }
+
+
+    @Test
+    public void givenInitializerParkingSpace_whenDispatchWithSlotIndexByRegisterNumberInquiryCommandInput_thenReturnNotFoundIfNotOccupant() {
+        Consumer<SpaceInitializer> initCustomizer = initializer -> initializer
+                .reserveSlot(1, Occupant.carInfo("ASD-123-234-QWE", PaintColor.WHITE))
+                .reserveSlot(2, Occupant.carInfo("ACD-123-235-WWE", PaintColor.RED))
+                .reserveSlot(4, Occupant.carInfo("ADD-123-237-CDE", PaintColor.WHITE));
+
+        Space space = Space.parkingWithCapacity(10, initCustomizer);
+        space.openSpace();
+
+        Consumer<List<SmartCommandTranslator>> translateCustomizer = translators ->
+                translators.add(new SlotIndexByRegistrationInquiryCommand.Translator());
+        Consumer<List<SmartResultFormatter>> formatCustomizers = formats ->
+                formats.add(new SlotIndexByRegistrationInquiryResult.Formatter());
+
+        CommandDispatcher dispatcher = new CommandDispatcher(translateCustomizer, formatCustomizers);
 
         String thirdOutput = dispatcher.dispatch("slot_number_for_registration_number ACD-123-235-WWC");
         assertThat(thirdOutput, is("Not found"));

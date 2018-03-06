@@ -1,8 +1,6 @@
 package parking.command.impl;
 
-import parking.command.core.Command;
-import parking.command.core.Result;
-import parking.command.core.SmartCommandTranslator;
+import parking.command.core.*;
 import parking.space.CurrentSpaceHolder;
 import parking.space.PaintColor;
 import parking.space.Slot;
@@ -49,37 +47,33 @@ public class SlotIndexByRegistrationInquiryCommand implements Command {
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "slot_number_for_registration_number ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "slot_number_for_registration_number";
 
-        private final String commandIdentifier;
+        private final CommandIdentifier identifier;
 
         public Translator() {
-            this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
+            identifier = CommandIdentifier.by(DEFAULT_COMMAND_IDENTIFIER);
         }
 
         @Override
-        public boolean supports(String input) {
-            return input.trim().toUpperCase().startsWith(commandIdentifier.toUpperCase());
+        public boolean supports(Input input) {
+            return identifier.equals(input.identifier());
         }
 
         @Override
-        public Command translate(String input) {
-            String[] inputParameters = input.trim().toUpperCase().replaceFirst(commandIdentifier.toUpperCase(), "")
-                    .trim().split("\\s{1,}");
-
-            if(inputParameters.length != 1) {
-                throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 1, inputParameters);
+        public Command translate(Input input) {
+            if(input.arguments().size() != 1) {
+                throw new InvalidArgumentSizeException(identifier, input.arguments().size(), 1, input.arguments());
             }
 
-            String registerNumber = inputParameters[0].trim();
+            String registerNumber = input.argument(0);
 
             CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
             if(!spaceHolder.exists()) {
-                throw new TargetSpaceNotFoundException(commandIdentifier.trim());
+                throw new TargetSpaceNotFoundException(identifier);
             }
 
-            SlotIndexByRegistrationInquiryCommand command = new SlotIndexByRegistrationInquiryCommand(spaceHolder.get(), registerNumber);
-            return command;
+            return new SlotIndexByRegistrationInquiryCommand(spaceHolder.get(), registerNumber);
         }
     }
 }

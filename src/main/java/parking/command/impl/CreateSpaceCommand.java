@@ -1,8 +1,6 @@
 package parking.command.impl;
 
-import parking.command.core.Command;
-import parking.command.core.Result;
-import parking.command.core.SmartCommandTranslator;
+import parking.command.core.*;
 import parking.space.Space;
 
 /**
@@ -32,34 +30,31 @@ public class CreateSpaceCommand implements Command {
     }
 
     public static class Translator implements SmartCommandTranslator {
-        private static final String DEFAULT_COMMAND_IDENTIFIER = "create_parking_lot ";
+        private static final String DEFAULT_COMMAND_IDENTIFIER = "create_parking_lot";
 
-        private final String commandIdentifier;
+        private final CommandIdentifier identifier;
 
         public Translator() {
-            this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
+            this.identifier = CommandIdentifier.by(DEFAULT_COMMAND_IDENTIFIER);
         }
 
         @Override
-        public boolean supports(String input) {
-            return input.trim().toUpperCase().startsWith(commandIdentifier.toUpperCase());
+        public boolean supports(Input input) {
+            return identifier.equals(input.identifier());
         }
 
         @Override
-        public Command translate(String input) {
-            String[] inputParameters = input.trim().toUpperCase().replaceFirst(commandIdentifier.toUpperCase(), "")
-                    .trim().split("\\s{1,}");
-
-            if(inputParameters.length != 1) {
-                throw new InvalidArgumentSizeException(commandIdentifier, inputParameters.length, 1, inputParameters);
+        public Command translate(Input input) {
+            if(input.arguments().size() != 1) {
+                throw new InvalidArgumentSizeException(identifier, input.arguments().size(), 1, input.arguments());
             }
 
             Integer spaceCapacity = null;
             try {
-                spaceCapacity = Integer.parseInt(inputParameters[0]);
+                spaceCapacity = Integer.parseInt(input.argument(0));
             }
             catch (NumberFormatException e) {
-                throw new InvalidArgumentTypeException(commandIdentifier, inputParameters[0], Integer.class);
+                throw new InvalidArgumentTypeException(identifier, input.argument(0), Integer.class);
             }
 
             CreateSpaceCommand command = new CreateSpaceCommand(spaceCapacity);

@@ -40,29 +40,24 @@ public class StatusInquiryCommand implements Command {
     public static class Translator implements SmartCommandTranslator {
         private static final String DEFAULT_COMMAND_IDENTIFIER = "status";
 
-        private final String commandIdentifier;
+        private final CommandIdentifier identifier;
 
         public Translator() {
-            this.commandIdentifier = DEFAULT_COMMAND_IDENTIFIER;
+            this.identifier = CommandIdentifier.by(DEFAULT_COMMAND_IDENTIFIER);
         }
 
         @Override
-        public boolean supports(String input) {
-            return input.trim().toUpperCase().startsWith(commandIdentifier.toUpperCase());
+        public boolean supports(Input input) {
+            return identifier.equals(input.identifier());
         }
 
         @Override
-        public Command translate(String input) {
-            String[] inputParameters = input.trim().toUpperCase().replaceFirst(commandIdentifier.toUpperCase(), "")
-                    .trim().split("\\s{1,}");
-
+        public Command translate(Input input) {
             CurrentSpaceHolder spaceHolder = CurrentSpaceHolder.instance();
             if(!spaceHolder.exists()) {
-                throw new TargetSpaceNotFoundException(commandIdentifier.trim());
+                throw new TargetSpaceNotFoundException(identifier);
             }
-
-            StatusInquiryCommand command = new StatusInquiryCommand(spaceHolder.get());
-            return command;
+            return new StatusInquiryCommand(spaceHolder.get());
         }
     }
 }

@@ -14,6 +14,9 @@ public class CommandDispatcher {
     private DelegatingCommandTranslator commandTranslators;
     private DelegatingResultFormatter resultFormats;
 
+    private InputParser inputParser;
+    private DispatchErrorHandler errorHandler;
+
     public CommandDispatcher(Consumer<List<SmartCommandTranslator>> translatorsCustomizer, Consumer<List<SmartResultFormatter>> formatsCustomizer) {
         if(translatorsCustomizer != null) {
             List<SmartCommandTranslator> delegateTranslators = new ArrayList<>();
@@ -25,16 +28,34 @@ public class CommandDispatcher {
             formatsCustomizer.accept(delegateFormats);
             this.resultFormats = new DelegatingResultFormatter(delegateFormats);
         }
+
+        this.inputParser = InputParser.defaultParser();
+    }
+
+    public InputParser inputParser() {
+        return inputParser;
+    }
+    public void inputParser(InputParser inputParser) {
+        this.inputParser = inputParser;
+    }
+
+    public DispatchErrorHandler errorHandler() {
+        return errorHandler;
+    }
+
+    public void errorHandler(DispatchErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
     }
 
     public String dispatch(String input) {
         try {
-            Command command = commandTranslators.translate(input);
-            Result result = command.execute();
-            return resultFormats.format(result);
+            Input parsedInput = inputParser.parse(input);
+            Command command = commandTranslators.translate(parsedInput);
+            Result executionResult = command.execute();
+            return resultFormats.format(executionResult);
         }
-        catch(TranslatorUnavailableException e) {
-            return "No command translator : ".concat(e.commandInput());
+        catch(TranslatorNotFoundException e) {
+            return "No command translator : ".concat(e.commandInput().original());
         }
         catch(CommandTranslationException e) {
             return "Command translation error : ".concat(e.getMessage());
